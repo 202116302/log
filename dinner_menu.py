@@ -8,7 +8,8 @@ from github_utils import get_github_repo, upload_github_issue
 
 def main():
     # github action 세팅 ##
-    access_token = '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'
+    # access_token = os.environ['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']
+    access_token = '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'
     repository_name = "log"
 
     seoul_timezone = timezone('Asia/Seoul')
