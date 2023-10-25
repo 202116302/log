@@ -31,9 +31,6 @@ def main():
             urllib.request.urlopen(
                 "https://api.thingspeak.com/update?api_key=Y8YE9ZO5XFAMIFNJ&field1={:0.1f}&field2={:0.1f}&field3={:0.1f}&field4={:0.1f}&field5={:0.1f}&field6={:0.1f}&field7={:0.1f}&field8={:0.1f}".format(
                     float(last_data[1]), float(last_data[2]), float(last_data[2]), float(last_data[3]), float(last_data[4]), float(last_data[5]), float(last_data[6]), float(last_data[7])))
-            print('done')
-
-            time.sleep(599)
 
         except RuntimeError as error:
             print(error.args[0])
