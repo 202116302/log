@@ -29,5 +29,5 @@ jobs:
       run: |
         python dinner_menu.py
       env:
-        MY_GITHUB_TOKEN: ${{ secrets.DATA_LOG }}
+        DATA_LOG: ${{ secrets.DATA_LOG }}
 
