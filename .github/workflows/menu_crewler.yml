@@ -11,6 +11,7 @@ name: menu_crawler
 on:
   schedule:
     - cron: '2 * * * *'
+#    - cron: '0 5 * * 1-5'
 
 jobs:
   build:
