@@ -55,11 +55,8 @@ def main():
 
     issue_title = f"{day_input}요일 진수원 메뉴 / {today_date}"
     upload_contents = data
-
-    file = open("log.txt", "w")
-    file.write(upload_contents)
-    file.close()
-
+    repo = get_github_repo(access_token, repository_name)
+    upload_github_issue(repo, issue_title, upload_contents)
 
 
 if __name__ == '__main__':
