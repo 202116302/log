@@ -21,7 +21,7 @@ jobs:
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential libffi-dev
 
-      - name: Install system dependencies2
+      - name: Install system dependenciesadd
         run: sudo apt-get install libffi-dev libssl-dev
      
       - name: Install Python dependencies
