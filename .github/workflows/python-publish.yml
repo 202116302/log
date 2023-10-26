@@ -10,7 +10,7 @@ name: menu_crawler
 
 on:
   schedule:
-    - cron: '2 * * * *'
+    - cron: '0 1 * * *'
 
 jobs:
   build:
