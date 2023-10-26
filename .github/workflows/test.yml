@@ -30,4 +30,7 @@ jobs:
           pip install -r requirements.txt
           
       - name: Run Python script
-        run: python dinner_menu.py # 이곳에 실제 파이썬 파일명을 적어주세요.
+        run: python dinner_menu.py
+        env:
+            pythonLocation: /opt/hostedtoolcache/Python/3.11.3/x64
+            LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.3/x64/lib
