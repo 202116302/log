@@ -49,17 +49,14 @@ def main():
                        in
                        row_dinner.find_all('td')]
 
-    data = f"{day_input}요일 \n 중식 : {menus_per_day_l[column_index]} \n 석식 : {menus_per_day_d[column_index]}"
+    data = f"{day_input}요일 중식 : {menus_per_day_l[column_index]} / 석식 : {menus_per_day_d[column_index]}"
 
     print(data)
 
     issue_title = f"{day_input}요일 진수원 메뉴 / {today_date}"
     upload_contents = data
-
-    file = open("log.txt", "w")
-    file.write(upload_contents)
-    file.close()
-
+    repo = get_github_repo(access_token, repository_name)
+    upload_github_issue(repo, issue_title, upload_contents)
 
 
 if __name__ == '__main__':
