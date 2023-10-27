@@ -1,17 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
-import os
 from datetime import datetime
 from pytz import timezone
-from github_utils import get_github_repo, upload_github_issue
-
+import smtplib
+import re
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
 def main():
-    # github action 세팅 ##
-    # access_token = os.environ['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']
-    access_token = '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'
-    repository_name = "log"
-
     seoul_timezone = timezone('Asia/Seoul')
     today = datetime.now(seoul_timezone)
     today_date = today.strftime("%Y년 %m월 %d일")
@@ -49,14 +46,54 @@ def main():
                        in
                        row_dinner.find_all('td')]
 
-    data = f"{day_input}요일 중식 : {menus_per_day_l[column_index]} / 석식 : {menus_per_day_d[column_index]}"
 
-    print(data)
+    data = f"{day_input}요일 \n 중식 : {menus_per_day_l[column_index]} \n 석식 : {menus_per_day_d[column_index]}"
+
 
     issue_title = f"{day_input}요일 진수원 메뉴 / {today_date}"
     upload_contents = data
-    repo = get_github_repo(access_token, repository_name)
-    upload_github_issue(repo, issue_title, upload_contents)
+
+
+    ### 메일 보내기
+
+    def sendEmail(addr):
+        reg = "^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$"  # 유효성 검사를 위한 정규표현식
+        if re.match(reg, addr):
+            smtp.sendmail(my_account, to_mail, msg.as_string())
+            print("정상적으로 메일이 발송되었습니다.")
+        else:
+            print("받으실 메일 주소를 정확히 입력하십시오.")
+
+    # smpt 서버와 연결
+    gmail_smtp = "smtp.gmail.com"  # gmail smtp 주소
+    gmail_port = 465  # gmail smtp 포트번호. 고정(변경 불가)
+    smtp = smtplib.SMTP_SSL(gmail_smtp, gmail_port)
+
+    # 로그인
+    my_account = "wls5258@jbnu.ac.kr"
+    my_password = "panda5258!"
+    smtp.login(my_account, my_password)
+
+    # 메일을 받을 계정
+    to_mail = "wls5258@naver.com"
+
+    # 메일 기본 정보 설정
+    msg = MIMEMultipart()
+    msg["Subject"] = issue_title # 메일 제목
+    msg["From"] = my_account
+    msg["To"] = to_mail
+
+    # 메일 본문 내용
+    content = upload_contents
+    content_part = MIMEText(content, "plain")
+    msg.attach(content_part)
+
+    # 받는 메일 유효성 검사 거친 후 메일 전송
+    sendEmail(to_mail)
+
+    # smtp 서버 연결 해제
+    smtp.quit()
+
 
 
 if __name__ == '__main__':
