@@ -49,7 +49,7 @@ def main():
                        in
                        row_dinner.find_all('td')]
 
-    data = f"{day_input}요일 중식 : {menus_per_day_l[column_index]} / 석식 : {menus_per_day_d[column_index]}"
+    data = f"{day_input}요일 \n 중식 : {menus_per_day_l[column_index]} \n 석식 : {menus_per_day_d[column_index]}"
 
     print(data)
 
