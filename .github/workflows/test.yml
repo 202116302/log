@@ -1,8 +1,8 @@
-name: Run Python Code
+name: send menu (email)
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # 24마다 시간 실행
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 jobs:
