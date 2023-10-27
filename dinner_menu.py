@@ -3,14 +3,13 @@ from bs4 import BeautifulSoup
 import os
 from datetime import datetime
 from pytz import timezone
-from github_utils import get_github_repo, upload_github_issue
-
+import pandas as pd
 
 def main():
-    # github action 세팅 ##
-    # access_token = os.environ['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']
-    access_token = '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'
-    repository_name = "log"
+    dirname = 'output'
+    if not os.path.exists(dirname):
+        os.mkdir(dirname)
+
 
     seoul_timezone = timezone('Asia/Seoul')
     today = datetime.now(seoul_timezone)
@@ -25,9 +24,13 @@ def main():
 
     # "tblType03" 클래스를 가진 table 찾기
     table = soup.find('table', {'class': 'tblType03'})
+    table2 = soup.find_all('table', {'class': 'tblType03'})[2]
 
     # table 내부의 모든 <tr> 태그 찾음
     rows = table.find_all('tr')
+    row2 = table2.find_all('tr')
+
+
     # 중식은 0 석식은 1인
 
     # 위와 마찬가지로 딕셔너리
@@ -37,9 +40,17 @@ def main():
     row_lunch = rows[1]
     row_dinner = rows[2]
 
+    row2_bf = row2[1]
+    row2_zz = row2[2]
+    row2_sp = row2[4]
+    row2_salad = row2[7]
+
+
     column_index = datetime.today().weekday()
 
     day_input = day_dict.get(column_index)
+
+
 
     menus_per_day_l = [' '.join(str(td).replace('<br/>', ', ').replace('<td>', '').replace('</td>', '').split()) for td
                        in
@@ -49,16 +60,54 @@ def main():
                        in
                        row_dinner.find_all('td')]
 
+    menus_per_day_bf = [' '.join(str(td).replace('<br/>', ', ').replace('<td>', '').replace('</td>', '').split()) for td
+                       in
+                        row2_bf.find_all('td')]
+
+    menus_per_day_zz = [' '.join(str(td).replace('<br/>', ', ').replace('<td>', '').replace('</td>', '').split()) for td
+                        in
+                        row2_zz.find_all('td')]
+
+    menus_per_day_sp = [' '.join(str(td).replace('<br/>', ', ').replace('<td>', '').replace('</td>', '').split()) for td
+                        in
+                        row2_sp.find_all('td')]
+
+    menus_per_day_salad = [' '.join(str(td).replace('<br/>', ', ').replace('<td>', '').replace('</td>', '').split()) for td
+                        in
+                        row2_salad.find_all('td')]
+
+
+
     data = f"{day_input}요일 \n 중식 : {menus_per_day_l[column_index]} \n 석식 : {menus_per_day_d[column_index]}"
 
-    print(data)
+    df = pd.DataFrame({'요일': [day_dict[0], day_dict[1], day_dict[2], day_dict[3], day_dict[4]],
+                       '진수당_중식': [menus_per_day_l[0], menus_per_day_l[1], menus_per_day_l[2], menus_per_day_l[3],
+                              menus_per_day_l[4]],
+                       '진수당_석식': [menus_per_day_d[0], menus_per_day_d[1], menus_per_day_d[2], menus_per_day_d[3],
+                              menus_per_day_d[4]],
+                       '후생관_조식': [menus_per_day_bf[0], menus_per_day_bf[1], menus_per_day_bf[2], menus_per_day_bf[3],
+                                  menus_per_day_bf[4]],
+                       '후생관_찌개': [menus_per_day_zz[0], menus_per_day_zz[1], menus_per_day_zz[2], menus_per_day_zz[3],
+                                  menus_per_day_zz[4]],
+                       '후생관_특식': [menus_per_day_sp[0], menus_per_day_sp[1], menus_per_day_sp[2], menus_per_day_sp[3],
+                                  menus_per_day_sp[4]],
+                       '후생관_샐러드': [menus_per_day_salad[0], menus_per_day_salad[1], menus_per_day_salad[2], menus_per_day_salad[3],
+                                  menus_per_day_salad[4]],
+                       })
 
-    issue_title = f"{day_input}요일 진수원 메뉴 / {today_date}"
-    upload_contents = data
+    df['업데이트날짜'] = today_date
 
-    file = open("log.txt", "w")
-    file.write(upload_contents)
-    file.close()
+    if not os.path.exists('output/jinsu_menu.csv'):
+        df.to_csv('output/jinsu_menu.csv', encoding='utf-8-sig', index=False)
+
+    else:
+        df_origin = pd.read_csv('output/jinsu_menu.csv')
+        df2 = pd.concat([df_origin, df])
+        df2 = df2.drop_duplicates()
+        df2.to_csv('output/jinsu_menu.csv', encoding='utf-8-sig', index=False)
+
+
+
 
 
 
