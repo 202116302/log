@@ -37,10 +37,8 @@ jobs:
             
       - name: Commits
         run: |
-          git init
           git config --local user.email "wls5258@naver.com"
           git config --local user.name "202116302" # 커밋에 포함될 이름
-          git add news.json
           git commit -m "menu_update" # 커밋 메세지
       - name: Push
         uses: ad-m/github-push-action@master
