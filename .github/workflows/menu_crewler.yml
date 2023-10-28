@@ -31,11 +31,11 @@ jobs:
           git config --local user.name "202116302" # 커밋에 포함될 이름
           git add output/jinsu_menu.csv
           git commit -m "Auto - Update data with Scraping" # 커밋 메세지
-          
+
       - name: Push
         uses: ad-m/github-push-action@master
         with:
-        branch: 'master'
-        github_token: $
+          branch: 'master'
+          github_token: $
 
 
