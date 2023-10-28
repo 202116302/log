@@ -22,24 +22,27 @@ def main():
     soup = BeautifulSoup(html_text, 'html.parser')
     # 홈페이지 가서 f12누르면 홈페이지 구성요소에 대한 정보가 나옴.
 
-    # "tblType03" 클래스를 가진 table 찾기
+    # "tblType03" 클래스를 가진 table 찾기 진수당
     table = soup.find('table', {'class': 'tblType03'})
+    # "tblType03" 클래스를 가진 table 찾기 후생관
     table2 = soup.find_all('table', {'class': 'tblType03'})[2]
 
     # table 내부의 모든 <tr> 태그 찾음
     rows = table.find_all('tr')
+    # 후생관
     row2 = table2.find_all('tr')
 
 
-    # 중식은 0 석식은 1인
 
     # 위와 마찬가지로 딕셔너리
     day_dict = {0: '월', 1: '화', 2: '수', 3: '목', 4: '금'}
 
     # 각 행에서 <th> 태그와 <td> 태그의 내용 가져오기
+    # 진수당 중식, 석식
     row_lunch = rows[1]
     row_dinner = rows[2]
 
+    # 후생관 조식, 찌개, 특식, 샐러드
     row2_bf = row2[1]
     row2_zz = row2[2]
     row2_sp = row2[4]
@@ -77,8 +80,9 @@ def main():
                         row2_salad.find_all('td')]
 
 
+    # 실행 시키면 메뉴 CSV 파일로 저장
 
-    data = f"{day_input}요일 \n 중식 : {menus_per_day_l[column_index]} \n 석식 : {menus_per_day_d[column_index]}"
+    # data = f"{day_input}요일 \n 중식 : {menus_per_day_l[column_index]} \n 석식 : {menus_per_day_d[column_index]}"
 
     df = pd.DataFrame({'요일': [day_dict[0], day_dict[1], day_dict[2], day_dict[3], day_dict[4]],
                        '진수당_중식': [menus_per_day_l[0], menus_per_day_l[1], menus_per_day_l[2], menus_per_day_l[3],

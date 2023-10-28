@@ -11,8 +11,12 @@ def main():
 
     if not os.path.exists('output/data_all.csv'):
         # 시작 날짜와 오늘의 날짜 가져오기
-        start_date = date(2023, 9, 26)
-        end_date = date.today()
+
+        # start_date = date(2023, 9, 26)
+        # end_date = date.today() # 오늘까지 데이터 받을 때 사용
+
+        start_date = date(2023, 10, 18)
+        end_date = date(2023, 10, 24)
 
         # 날짜 범위 내의 날짜를 리스트로 저장
         date_list = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
@@ -41,18 +45,18 @@ def main():
 
         df_all = pd.concat(df_list)
 
-        df_all.to_csv('output/data_all.csv', encoding='utf-8-sig', index=False)
+        df_all.to_csv('output/data_won.csv', encoding='utf-8-sig', index=False)
 
-    else:
-        df2 = pd.read_csv('output/data_all.csv')
-        df2 = df2[df2['날짜'].isin(['2023-09-26', '2023-09-27', '2023-09-28', '2023-09-29'])]
-
-        last_date = df2.tail(1)['날짜'].str.split('-')
-
-        start_date = date(int(last_date.str[0]), int(last_date.str[1]), int(last_date.str[2]))
-        end_date = date.today()
-
-        date_list = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+    # else:
+    #     df2 = pd.read_csv('output/data_all.csv')
+    #     df2 = df2[df2['날짜'].isin(['2023-09-26', '2023-09-27', '2023-09-28', '2023-09-29'])]
+    #
+    #     last_date = df2.tail(1)['날짜'].str.split('-')
+    #
+    #     start_date = date(int(last_date.str[0]), int(last_date.str[1]), int(last_date.str[2]))
+    #     end_date = date.today()
+    #
+    #     date_list = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
 
 
 
