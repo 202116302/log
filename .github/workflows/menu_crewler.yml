@@ -10,19 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v3
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v1
         with:
-          python-version: 3.9
-
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential libffi-dev
-
-      - name: Install system dependenciesadd
-        run: sudo apt-get install libffi-dev libssl-dev
+          python-version: '3.x'
+          architecture: 'x64'
      
       - name: Install Python dependencies
         run: |
