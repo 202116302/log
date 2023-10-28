@@ -25,9 +25,17 @@ jobs:
       - name: Run Python script
         run: python dinner_menu.py
 
-      - name: Save CSV to Repository
+      - name: Commits
         run: |
-          output/jinsu_menu.csv $GITHUB_WORKSPACE/result.csv
-        working-directory: $GITHUB_WORKSPACE
+          git config --local user.email "wls5258@naver.com"
+          git config --local user.name "202116302" # 커밋에 포함될 이름
+          git add output/jinsu_menu.csv
+          git commit -m "Auto - Update data with Scraping" # 커밋 메세지
+          
+      - name: Push
+        uses: ad-m/github-push-action@master
+        with:
+        branch: 'master'
+        github_token: $
 
 
