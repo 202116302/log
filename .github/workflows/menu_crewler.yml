@@ -1,6 +1,7 @@
 name: menu_crewler
 
 on:
+  workflow_dispatch:
 
 jobs:
   build:
