@@ -50,6 +50,8 @@ def main():
                        in
                        row_lunch.find_all('td')]
 
+
+
     menus_per_day_d = [' '.join(str(td).replace('<br/>', ', ').replace('<td>', '').replace('</td>', '').split()) for td
                        in
                        row_dinner.find_all('td')]

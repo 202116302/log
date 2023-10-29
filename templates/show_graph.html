@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>showgraph</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+
+<body onload="graph()">
+<canvas id="myChart" width="800" height="600"></canvas>
+<canvas id="myChart2" width="800" height="600"></canvas>
+<canvas id="myChart3" width="800" height="600"></canvas>
+<script>
+    function graph() {
+
+            $.ajax({
+                type: "GET",
+                url: "http://127.0.0.1:5000",
+                success: past_result,
+                dataType: "json"
+            });
+         }
+
+        function now_result(data) {
+            data = JSON.parse(data)
+            $("#temp").html(data['temp'])
+            $("#humid").html(data['humid'])
+            $("#sunshine").html(data['sunshine'])
+            $("#wind_dir").html(data['wind_dir'])
+            $("#wind_speed").html(data['wind_speed'])
+            $("#time").html(data['time'])
+
+        }
+
+        function past_result(data) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data['time'],
+                    datasets: [{
+                        label: '온도',
+                        data: data['temp'],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('myChart2').getContext('2d');
+            const myChart2 = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: data['time'],
+                    datasets: [{
+                        label: '습도',
+                        data: data['humid'],
+                        backgroundColor: [
+                            'rgba(240, 70, 132, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(240, 70, 132, 1)'
+                        ],
+                        borderWidth: 1,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            const ctx3 = document.getElementById('myChart3').getContext('2d');
+            const myChart3 = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: data['time'],
+                    datasets: [{
+                        label: '광도',
+                        data: data['sunshine'],
+                        backgroundColor: [
+                            'rgba(240, 70, 132, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(240, 70, 132, 1)'
+                        ],
+                        borderWidth: 1,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+        }
+
+
+
+
+
+</script>
+
+</body>
+</html>
