@@ -2,7 +2,7 @@ name: send menu (email)
 
 on:
   schedule:
-    - cron: '* 9 * * 1-5'
+    - cron: '* 2 * * 1-5'
   workflow_dispatch:
 
 jobs:
