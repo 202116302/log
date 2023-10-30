@@ -27,8 +27,6 @@ def main():
 
     chan = ['무침', '볶음']
 
-
-
     result_js = count_menu_sum(df_j, soup)
     result_hs = count_menu_sum(df_h, soup)
     result_jc = count_menu_sum(df_j, chan)
@@ -77,23 +75,19 @@ def main():
     col1, col2, col3 = st.columns(3)
 
     with col1:
-
         st.subheader('국(국, 찌개, 탕)')
 
         st.bar_chart(df_s, width=400, use_container_width=False)
 
     with col2:
-
         st.subheader('고기(돼지, 닭, 소)')
 
         st.bar_chart(df_m, width=400, use_container_width=False)
 
     with col3:
-
         st.subheader('반찬(무침, 볶음)')
 
         st.bar_chart(df_c, width=400, use_container_width=False)
-
 
 
 if __name__ == '__main__':

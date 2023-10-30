@@ -2,9 +2,153 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
     <title>Title</title>
+    <style>
+        /* 스타일링을 위한 CSS */
+        body {
+            margin: 0;
+            padding: 0;
+
+        }
+
+        #sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            transition: 0.5s;
+            z-index: 1;
+        }
+
+        #sidebar.open {
+            width: 250px;
+        }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
+
+        #main.shifted {
+            margin-left: 250px;
+        }
+
+        /* 사이드바 링크 스타일링 */
+        #sidebar a {
+            padding: 8px 25px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        #sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+         #sidebar .sidebar-content {
+            display: none; /* 초기에는 숨김 */
+        }
+
+        #sidebar.open .sidebar-content {
+            display: block; /* 사이드바 열렸을 때만 보이게 함 */
+        }
+    </style>
 </head>
-<body>
-<i
+<body onload="update_data()">
+<script>
+    function update_data() {
+            $.ajax({
+                type: "GET",
+                url: "http://127.0.0.1:5000/last",
+                success: now_result,
+                dataType: "json"
+            });
+         }
+
+        function now_result(data) {
+
+
+            console.log(data)
+            $("#temp").html(data['field1'])
+            $("#humid").html(data['field2'])
+            $("#sunshine").html(data['field3'])
+            $("#wind_dir").html(data['wind_dir'])
+            $("#wind_speed").html(data['wind_speed'])
+            $("#time").html(data['created_at'])
+
+
+
+        }
+
+        setInterval(update_data, 30000);
+</script>
+<h1 class="text-center">챔버 내 환경 실시간 모니터링</h1>
+<h2 class="text-center" id="time"></h2>
+<div id="sidebar">
+     <div class="sidebar-content mt-5">
+        <!-- 사이드바 내용 추가 -->
+        <a href="/landing">그래프 보기 &<br> 파일 다운로드</a>
+        <a href="/show">실시간 모니터링</a>
+        <!-- 다른 사이드바 링크 추가 가능 -->
+    </div>
+</div>
+<div id="main">
+    <button class="btn btn-dark mb-2" onclick="toggleSidebar()">메뉴</button>
+<script>
+    let sidebarOpen = false;
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const main = document.getElementById("main");
+
+        if (sidebarOpen) {
+            sidebarOpen = false;
+            sidebar.classList.remove("open");
+            main.classList.remove("shifted");
+        } else {
+            sidebarOpen = true;
+            sidebar.classList.add("open");
+            main.classList.add("shifted");
+        }
+    }
+</script>
+
+<div class="card shadow p-3 mb-5 bg-white rounded mx-5">
+<div class="row text-center">
+<div class="col-6">
+    <iframe src="https://thingspeak.com/channels/1999882/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=온도&type=line" style="width: 500px; height: 300px;"></iframe>
+</div>
+    <div class="col-6 h2 mt-5" id="temp">
+    </div>
+</div>
+</div>
+<div class="card shadow p-3 mb-5 bg-white rounded mx-5">
+<div class="row text-center">
+<div class="col-6">
+<iframe src="https://thingspeak.com/channels/1999882/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=습도&type=line" style="width: 500px; height: 300px;"></iframe>
+</div>
+    <div class="col-6 h2 mt-5" id="humid"></div>
+</div>
+</div>
+<div class="card shadow p-3 mb-5 bg-white rounded mx-5">
+<div class="row text-center">
+<div class="col-6">
+<iframe src="https://thingspeak.com/channels/1999882/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=광도&type=line" style="width: 500px; height: 300px;"></iframe>
+</div>
+    <div class="col-6 h2 mt-5" id="sunshine"></div>
+    </div>
+</div>
+</div>
 </body>
 </html>

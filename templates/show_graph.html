@@ -3,22 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <title>showgraph</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <style>
+        /* 스타일링을 위한 CSS */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            transition: 0.5s;
+            z-index: 1;
+        }
+
+        #sidebar.open {
+            width: 250px;
+        }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
+
+        #main.shifted {
+            margin-left: 250px;
+        }
+
+        /* 사이드바 링크 스타일링 */
+        #sidebar a {
+            padding: 8px 25px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        #sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+         #sidebar .sidebar-content {
+            display: none; /* 초기에는 숨김 */
+        }
+
+        #sidebar.open .sidebar-content {
+            display: block; /* 사이드바 열렸을 때만 보이게 함 */
+        }
+    </style>
 </head>
 
-<body onload="graph()">
-<canvas id="myChart" width="800" height="600"></canvas>
-<canvas id="myChart2" width="800" height="600"></canvas>
-<canvas id="myChart3" width="800" height="600"></canvas>
+<body>
+<h1 class="text-center">기간별 그래프</h1>
+
+<div id="sidebar">
+     <div class="sidebar-content mt-5">
+        <!-- 사이드바 내용 추가 -->
+        <a href="/landing">그래프 보기 &<br> 파일 다운로드</a>
+        <a href="/show">실시간 모니터링</a>
+        <!-- 다른 사이드바 링크 추가 가능 -->
+    </div>
+</div>
+<div id="main">
+     <button class="btn btn-dark mb-2" onclick="toggleSidebar()">메뉴</button>
+    <form id="form_id" action="javascript:graph()">
+        <label>시간입력
+            <input type="text" name="hours" placeholder="ex) 60 / 시간으로 입력됨">
+        </label>
+        <button class="btn btn-dark" type="submit">그래프출력</button>
+    </form>
+    <form id="form_id2" action="http://127.0.0.1:5000/download">
+        <label>시간입력
+            <input type="text" name="hour" placeholder="ex) 60 / 시간으로 입력됨">
+        </label>
+        <button class="btn btn-dark" type="submit">파일 다운로드</button>
+    </form>
+<script>
+    let sidebarOpen = false;
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const main = document.getElementById("main");
+
+        if (sidebarOpen) {
+            sidebarOpen = false;
+            sidebar.classList.remove("open");
+            main.classList.remove("shifted");
+        } else {
+            sidebarOpen = true;
+            sidebar.classList.add("open");
+            main.classList.add("shifted");
+        }
+    }
+</script>
+
+        <div class="card mx-5 my-5 shadow p-3 mb-5 bg-white rounded">
+            <canvas id="myChart" width="800" height="600"></canvas>
+            <canvas id="myChart2" width="800" height="600"></canvas>
+            <canvas id="myChart3" width="800" height="600"></canvas>
+        </div>
 <script>
     function graph() {
 
             $.ajax({
                 type: "GET",
-                url: "http://127.0.0.1:5000",
+                url: "http://127.0.0.1:5000/",
+                data: $("#form_id").serialize(),
                 success: past_result,
                 dataType: "json"
             });
@@ -36,97 +138,113 @@
         }
 
         function past_result(data) {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            const myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data['time'],
-                    datasets: [{
-                        label: '온도',
-                        data: data['temp'],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)'
-                        ],
-                        borderWidth: 1,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
 
-            const ctx2 = document.getElementById('myChart2').getContext('2d');
-            const myChart2 = new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: data['time'],
-                    datasets: [{
-                        label: '습도',
-                        data: data['humid'],
-                        backgroundColor: [
-                            'rgba(240, 70, 132, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(240, 70, 132, 1)'
-                        ],
-                        borderWidth: 1,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data['time'],
+                        datasets: [{
+                            label: '온도',
+                            data: data['temp'],
+                            backgroundColor: [
+                                'rgba(248,85,85,0.78)',
+                            ],
+                            borderColor: [
+                                'rgb(250,2,2)'
+                            ],
+                            borderWidth: 1,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            const ctx3 = document.getElementById('myChart3').getContext('2d');
-            const myChart3 = new Chart(ctx3, {
-                type: 'line',
-                data: {
-                    labels: data['time'],
-                    datasets: [{
-                        label: '광도',
-                        data: data['sunshine'],
-                        backgroundColor: [
-                            'rgba(240, 70, 132, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(240, 70, 132, 1)'
-                        ],
-                        borderWidth: 1,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                const ctx2 = document.getElementById('myChart2').getContext('2d');
+                const myChart2 = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: data['time'],
+                        datasets: [{
+                            label: '습도',
+                            data: data['humid'],
+                            backgroundColor: [
+                                'rgba(23,111,246,0.67)',
+                            ],
+                            borderColor: [
+                                'rgba(52,126,239,0.89)'
+                            ],
+                            borderWidth: 1,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
+
+                const ctx3 = document.getElementById('myChart3').getContext('2d');
+                const myChart3 = new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: data['time'],
+                        datasets: [{
+                            label: '광도',
+                            data: data['sunshine'],
+                            backgroundColor: [
+                                'rgba(232,200,48,0.92)',
+                            ],
+                            borderColor: [
+                                'rgba(232,209,108,0.96)'
+                            ],
+                            borderWidth: 1,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+
 
         }
 
 
-
+        // function reset_graph(){
+        //     const canvas = document.getElementById('myChart'); // Canvas 요소 가져오기
+        //     const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져오기
+        //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //
+        //     const canvas2 = document.getElementById('myChart2'); // Canvas 요소 가져오기
+        //     const ctx2 = canvas2.getContext('2d'); // 2D 컨텍스트 가져오기
+        //     ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        //
+        //     const canvas3 = document.getElementById('myChart3'); // Canvas 요소 가져오기
+        //     const ctx3 = canvas3.getContext('2d'); // 2D 컨텍스트 가져오기
+        //     ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+        //
+        // }
 
 
 </script>
-
+</div>
 </body>
 </html>
